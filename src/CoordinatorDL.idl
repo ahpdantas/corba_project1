@@ -1,0 +1,6 @@
+module CoordinatorApp{
+	interface Coordinator{
+		void request (in string processID);
+		void release (in string processID);
+	};
+};

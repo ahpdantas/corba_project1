@@ -1,27 +1,28 @@
-package app;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class ConsumerApp extends JFrame {
+public class CoordinatorGui extends JFrame implements ActionListener, KeyListener {
 	static final long serialVersionUID = 1L;
 	private LayoutManager layout;
-	private JTextArea consumerLog;
+	private JTextArea coordinatorLog;
 	private JTextArea processQueue;
-		
 	
-	public ConsumerApp(){
-		
+	public CoordinatorGui(){
 		layout = new BorderLayout();
 		this.setLayout(layout);
 		
@@ -31,12 +32,12 @@ public class ConsumerApp extends JFrame {
 		JPanel consumerPanel = new JPanel();
 		consumerPanel.setLayout(new BoxLayout(consumerPanel, BoxLayout.Y_AXIS));
 				
-		consumerLog = new JTextArea(20,30);
-		consumerLog.setBorder(BorderFactory.createEtchedBorder(Color.BLUE,Color.BLUE));
-		consumerLog.setEditable(false);
+		coordinatorLog = new JTextArea(20,30);
+		coordinatorLog.setBorder(BorderFactory.createEtchedBorder(Color.BLUE,Color.BLUE));
+		coordinatorLog.setEditable(false);
 		
 		consumerPanel.add(new JLabel("Consumer Log"));
-		consumerPanel.add(new JScrollPane(consumerLog));
+		consumerPanel.add(new JScrollPane(coordinatorLog));
 		
 				
 		JPanel queuePanel = new JPanel();
@@ -55,13 +56,41 @@ public class ConsumerApp extends JFrame {
 	    this.setVisible(true);
 	    this.setSize(500, 400);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	public void log(String msg){
+		coordinatorLog.append(msg);
+	}
+	
+	public void addToQueueLog(String processID){
+		
+	}
+	
+	public void removeFromQueueLog(){
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
-	public static void main(String[] args) {
+	@Override
+	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		ConsumerApp app = new ConsumerApp();
+		
+	}
 
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

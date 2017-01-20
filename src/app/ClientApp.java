@@ -1,60 +1,68 @@
 package app;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.LayoutManager;
+import org.omg.CosNaming.*; 
+import org.omg.CORBA.*;
+import org.omg.PortableServer.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import ClientApp.ClientPOA;
+import CoordinatorApp.Coordinator;
+import CoordinatorApp.CoordinatorHelper;
+import java.util.UUID;
+import gui.ClientGui;
 
-public class ClientApp extends JFrame {
-	private static final long serialVersionUID = 1L;
-	private LayoutManager layout;
-	private JTextArea clientLog;
-	private JButton btnRequest;
-	private JButton btnRelease;
-		
-	public ClientApp(){
-		
-		layout = new BorderLayout();
-		this.setLayout(layout);
-		
-		JPanel Panel = new JPanel();
-				
-		clientLog = new JTextArea(13,15);
-		clientLog.setBorder(BorderFactory.createEtchedBorder(Color.BLUE,Color.BLUE));
-		clientLog.setEditable(false);
-		
-		JScrollPane scroll = new JScrollPane(clientLog);
-		
-	    btnRequest = new JButton("Request");
-	    btnRequest.setToolTipText("Request acess to critic space");
-		
-	    btnRelease = new JButton("Release");
-	    btnRequest.setToolTipText("Release resource");
 
-	    Panel.add(new JLabel("Client Log"));
-	    Panel.add(scroll);
-		Panel.add(btnRequest);
-		Panel.add(btnRelease);
-		
-		this.add(Panel);
-		
-	    this.setVisible(true);
-	    this.setSize(200, 320);
-	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		 		
+public class ClientApp extends ClientPOA{
+	private ClientGui clientGui;
+	private String ID;
+	private Coordinator coordinator;
+	@Override
+	public void OK() {
+		// TODO Auto-generated method stub
+		this.clientGui.log("Accessing the critical session\r\n");
 	}
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		ClientApp app = new ClientApp();
+	public ClientApp(String ID, Coordinator coordinator){
+		this.ID = ID;
+		this.coordinator = coordinator;
+		clientGui = new ClientGui(this.ID,this.coordinator);
 	}
 
+	public static void main(String[] args) {
+
+		try{
+			ORB orb = ORB.init(args,null); 	
+		
+			org.omg.CORBA.Object objPoa = orb.resolve_initial_references("RootPOA");
+			POA rootPOA = POAHelper.narrow(objPoa);		
+
+
+			org.omg.CORBA.Object obj = orb.resolve_initial_references("NameService");
+			NamingContext naming = NamingContextHelper.narrow(obj);
+			
+			String clientID = UUID.randomUUID().toString();
+			
+			NameComponent[] coordinatorName = {new NameComponent("Coordinator","")};
+			org.omg.CORBA.Object coordObjRef =  naming.resolve(coordinatorName);
+			Coordinator coordinator = CoordinatorHelper.narrow(coordObjRef);
+			
+			ClientApp client = new ClientApp(clientID, coordinator);
+			org.omg.CORBA.Object   objRef =	 rootPOA.servant_to_reference(client);
+			
+			NameComponent[] name = {new NameComponent(clientID,"")};
+			naming.rebind(name,objRef);
+			rootPOA.the_POAManager().activate();
+
+			System.out.println("Client ready ...");
+			
+
+			
+
+			
+			orb.run();
+
+		   }catch (Exception ex){
+				ex.printStackTrace();
+		  }
+
+	}
 }

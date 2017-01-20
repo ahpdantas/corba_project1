@@ -1,0 +1,5 @@
+module ClientApp{
+	interface Client{
+		void OK();
+	};
+};
