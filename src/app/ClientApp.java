@@ -18,7 +18,8 @@ public class ClientApp extends ClientPOA{
 	@Override
 	public void OK() {
 		// TODO Auto-generated method stub
-		this.clientGui.log("Accessing the critical session\r\n");
+		this.clientGui.enableBtnRelease();
+		this.clientGui.log("Process accessing the critical session\r\n");
 	}
 	
 	public ClientApp(String ID, Coordinator coordinator){
@@ -52,12 +53,6 @@ public class ClientApp extends ClientPOA{
 			naming.rebind(name,objRef);
 			rootPOA.the_POAManager().activate();
 
-			System.out.println("Client ready ...");
-			
-
-			
-
-			
 			orb.run();
 
 		   }catch (Exception ex){

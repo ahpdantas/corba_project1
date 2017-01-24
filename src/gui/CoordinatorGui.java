@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -32,7 +33,7 @@ public class CoordinatorGui extends JFrame implements ActionListener, KeyListene
 		JPanel consumerPanel = new JPanel();
 		consumerPanel.setLayout(new BoxLayout(consumerPanel, BoxLayout.Y_AXIS));
 				
-		coordinatorLog = new JTextArea(20,30);
+		coordinatorLog = new JTextArea(20,45);
 		coordinatorLog.setBorder(BorderFactory.createEtchedBorder(Color.BLUE,Color.BLUE));
 		coordinatorLog.setEditable(false);
 		
@@ -43,7 +44,7 @@ public class CoordinatorGui extends JFrame implements ActionListener, KeyListene
 		JPanel queuePanel = new JPanel();
 		queuePanel.setLayout(new BoxLayout(queuePanel, BoxLayout.Y_AXIS));
 	
-		processQueue = new JTextArea(20,5);
+		processQueue = new JTextArea(20,20);
 		processQueue.setBorder(BorderFactory.createEtchedBorder(Color.BLUE,Color.BLUE));
 		processQueue.setEditable(false);
 				
@@ -54,7 +55,9 @@ public class CoordinatorGui extends JFrame implements ActionListener, KeyListene
 		mainPanel.add(queuePanel);
 		
 	    this.setVisible(true);
-	    this.setSize(500, 400);
+	    this.setTitle("Coodinator Application");
+	    this.setSize(800, 400);
+	    this.setResizable(false);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
@@ -62,13 +65,14 @@ public class CoordinatorGui extends JFrame implements ActionListener, KeyListene
 		coordinatorLog.append(msg);
 	}
 	
-	public void addToQueueLog(String processID){
-		
+	public void drawQueue(ArrayList<String> processQueue){
+		this.processQueue.setText(null);
+		for( String process : processQueue ){
+			this.processQueue.append(process + "\r\n");
+		}
+			
 	}
 	
-	public void removeFromQueueLog(){
-	}
-
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub

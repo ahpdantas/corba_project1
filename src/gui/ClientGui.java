@@ -36,7 +36,7 @@ public class ClientGui extends JFrame implements ActionListener, KeyListener{
 		
 		JPanel Panel = new JPanel();
 				
-		clientLog = new JTextArea(13,15);
+		clientLog = new JTextArea(18,20);
 		clientLog.setBorder(BorderFactory.createEtchedBorder(Color.BLUE,Color.BLUE));
 		clientLog.setEditable(false);
 		
@@ -59,12 +59,18 @@ public class ClientGui extends JFrame implements ActionListener, KeyListener{
 		this.add(Panel);
 		
 	    this.setVisible(true);
-	    this.setSize(200, 320);
+	    this.setTitle("Client Application");
+	    this.setSize(250, 400);
+	    this.setResizable(false);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	public void log(String msg){
 		clientLog.append(msg);
+	}
+	
+	public void enableBtnRelease(){
+		this.btnRelease.setEnabled(true);
 	}
 	
 	@Override
@@ -92,10 +98,9 @@ public class ClientGui extends JFrame implements ActionListener, KeyListener{
 		if( command.equals("Request")){
 			this.coordinator.request(this.ID);
 			this.btnRequest.setEnabled(false);
-			this.btnRelease.setEnabled(true);
 		}else if( command.equals("Release")){
 			this.coordinator.release(this.ID);
-			this.log(this.ID + "releasing the critical session\r\n");
+			this.log("Process releasing the critical session\r\n");
 			this.btnRequest.setEnabled(true);
 			this.btnRelease.setEnabled(false);
 		}

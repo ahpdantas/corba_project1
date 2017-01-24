@@ -28,15 +28,16 @@ public class CoordinatorApp extends CoordinatorPOA{
 	@Override
 	public void request(String processID) {
 		// TODO Auto-generated method stub
-		if( processQueue.isEmpty() ){
-			processQueue.add(processID);
-			
-			this.coordinatorGui.log("Adding "+ processID +" to queue...\r\n");
+		processQueue.add(processID);
+		coordinatorGui.drawQueue(processQueue);
+		this.coordinatorGui.log("Adding process "+ processID +" to queue...\r\n");
+				
+		if( processQueue.size() == 1 ){
 			try{
 				NameComponent[] processName = {new NameComponent(processID,"")};
 				org.omg.CORBA.Object processObjRef =  naming.resolve(processName);
 				Client client = ClientHelper.narrow(processObjRef);
-				this.coordinatorGui.log("Grant access to "+ processID+"\r\n");
+				this.coordinatorGui.log("Grant access to process "+ processID+"\r\n");
 				client.OK();
 			}catch (Exception ex){
 				ex.printStackTrace();
@@ -44,8 +45,7 @@ public class CoordinatorApp extends CoordinatorPOA{
 			
 			
 		}else{
-			processQueue.add(processID);
-			this.coordinatorGui.log("Adding "+ processID +" to queue...\r\n");
+			this.coordinatorGui.log("Adding the process "+ processID +" to queue...\r\n");
 		}
 		
 		
@@ -55,14 +55,17 @@ public class CoordinatorApp extends CoordinatorPOA{
 	public void release(String processID) {
 		// TODO Auto-generated method stub
 		processQueue.remove(0);
-		this.coordinatorGui.log(processID +" releasing the critical session...\r\n");
+		coordinatorGui.drawQueue(processQueue);
+		this.coordinatorGui.drawQueue(processQueue);
+		
+		this.coordinatorGui.log("Process "+ processID +" released the critical session...\r\n");
 		try{
 			if( !processQueue.isEmpty() ){
 				String nextProcessID = processQueue.get(0);
 				NameComponent[] processName = {new NameComponent(nextProcessID,"")};
 				org.omg.CORBA.Object processObjRef =  naming.resolve(processName);
 				Client client = ClientHelper.narrow(processObjRef);
-				this.coordinatorGui.log(nextProcessID +" accessing the critical session...\r\n");
+				this.coordinatorGui.log("Process "+ nextProcessID +" accessing the critical session...\r\n");
 				client.OK();
 			}
 		}catch(Exception ex){
