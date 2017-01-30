@@ -19,7 +19,7 @@ public class ClientApp extends ClientPOA{
 	public void OK() {
 		// TODO Auto-generated method stub
 		this.clientGui.enableBtnRelease();
-		this.clientGui.log("Process accessing the critical session\r\n");
+		this.clientGui.log("Accessing the critical session\r\n");
 	}
 	
 	public ClientApp(String ID, Coordinator coordinator){

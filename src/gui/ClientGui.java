@@ -49,7 +49,7 @@ public class ClientGui extends JFrame implements ActionListener, KeyListener{
 	    btnRelease = new JButton("Release");
 	    btnRelease.addActionListener(this);
 	    btnRelease.setEnabled(false);
-	    btnRequest.setToolTipText("Release resource");
+	    btnRelease.setToolTipText("Release resource");
 
 	    Panel.add(new JLabel("Client Log"));
 	    Panel.add(scroll);
@@ -60,7 +60,7 @@ public class ClientGui extends JFrame implements ActionListener, KeyListener{
 		
 	    this.setVisible(true);
 	    this.setTitle("Client Application");
-	    this.setSize(250, 400);
+	    this.setSize(270, 400);
 	    this.setResizable(false);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -96,11 +96,13 @@ public class ClientGui extends JFrame implements ActionListener, KeyListener{
 		// TODO Auto-generated method stub
 		String command = arg0.getActionCommand();
 		if( command.equals("Request")){
+			this.log("Request acess to critical session.\r\n");
+			this.log("Waiting for the coordinator frees the acess...\r\n");
 			this.coordinator.request(this.ID);
 			this.btnRequest.setEnabled(false);
 		}else if( command.equals("Release")){
 			this.coordinator.release(this.ID);
-			this.log("Process releasing the critical session\r\n");
+			this.log("Releasing the critical session\r\n");
 			this.btnRequest.setEnabled(true);
 			this.btnRelease.setEnabled(false);
 		}

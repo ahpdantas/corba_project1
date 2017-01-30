@@ -17,6 +17,7 @@ import gui.CoordinatorGui;
 public class CoordinatorApp extends CoordinatorPOA{
 	private NamingContext naming;
 	private CoordinatorGui coordinatorGui;
+	private boolean criticalSession = false;
 	private ArrayList<String> processQueue = new ArrayList<String>();
 	
 	public CoordinatorApp(NamingContext naming) {
@@ -28,44 +29,46 @@ public class CoordinatorApp extends CoordinatorPOA{
 	@Override
 	public void request(String processID) {
 		// TODO Auto-generated method stub
-		processQueue.add(processID);
-		coordinatorGui.drawQueue(processQueue);
-		this.coordinatorGui.log("Adding process "+ processID +" to queue...\r\n");
-				
-		if( processQueue.size() == 1 ){
-			try{
-				NameComponent[] processName = {new NameComponent(processID,"")};
-				org.omg.CORBA.Object processObjRef =  naming.resolve(processName);
-				Client client = ClientHelper.narrow(processObjRef);
-				this.coordinatorGui.log("Grant access to process "+ processID+"\r\n");
-				client.OK();
-			}catch (Exception ex){
-				ex.printStackTrace();
-			}
-			
-			
+		if( criticalSession == true ){
+			processQueue.add(processID);
+			coordinatorGui.drawQueue(processQueue);
+			this.coordinatorGui.log("Adding process "+ processID +" to queue...\r\n");
 		}else{
-			this.coordinatorGui.log("Adding the process "+ processID +" to queue...\r\n");
+			if( processQueue.isEmpty() ){
+				try{
+					NameComponent[] processName = {new NameComponent(processID,"")};
+					org.omg.CORBA.Object processObjRef =  naming.resolve(processName);
+					Client client = ClientHelper.narrow(processObjRef);
+					this.coordinatorGui.log("Grant access to process "+ processID+"\r\n");
+					this.criticalSession = true;
+					client.OK();
+				}catch (Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			else{
+				processQueue.add(processID);
+				coordinatorGui.drawQueue(processQueue);
+				this.coordinatorGui.log("Adding process "+ processID +" to queue...\r\n");
+			}
 		}
-		
 		
 	}
 
 	@Override
 	public void release(String processID) {
 		// TODO Auto-generated method stub
-		processQueue.remove(0);
-		coordinatorGui.drawQueue(processQueue);
-		this.coordinatorGui.drawQueue(processQueue);
-		
+		this.criticalSession = false;
 		this.coordinatorGui.log("Process "+ processID +" released the critical session...\r\n");
 		try{
 			if( !processQueue.isEmpty() ){
-				String nextProcessID = processQueue.get(0);
+				String nextProcessID = processQueue.remove(0);
+				coordinatorGui.drawQueue(processQueue);
 				NameComponent[] processName = {new NameComponent(nextProcessID,"")};
 				org.omg.CORBA.Object processObjRef =  naming.resolve(processName);
 				Client client = ClientHelper.narrow(processObjRef);
-				this.coordinatorGui.log("Process "+ nextProcessID +" accessing the critical session...\r\n");
+				this.coordinatorGui.log("Grant access to process "+nextProcessID+"\r\n");
+				this.criticalSession = true;
 				client.OK();
 			}
 		}catch(Exception ex){
